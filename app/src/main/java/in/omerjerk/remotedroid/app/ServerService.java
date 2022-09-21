@@ -369,7 +369,7 @@ public class ServerService extends Service {
 
                     try {
                         encoder.releaseOutputBuffer(encoderStatus, false);
-                    } catch (IllegalStateException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
