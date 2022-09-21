@@ -83,7 +83,7 @@ public class ServerService extends Service {
     public static final String NOTIFICATION_CHANNEL_DESC = "cast server";
     public static final String NOTIFICATION_CHANNEL_ID = "channel_id_server";
     public void createNotification() {
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Intent notificationIntent = new Intent(this, ServerService.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
             Notification.Builder notificationBuilder = (new Notification.Builder(this, NOTIFICATION_CHANNEL_ID))
