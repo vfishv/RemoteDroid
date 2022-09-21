@@ -2,11 +2,14 @@ package in.omerjerk.remotedroid.app;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
@@ -68,6 +71,36 @@ public class ServerService extends Service {
     private static boolean LOCAL_DEBUG = false;
     VideoWindow videoWindow = null;
     private VirtualDisplay virtualDisplay;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        createNotification();
+    }
+
+    public static final int NOTIFICATION_ID = 123567;
+    public static final String NOTIFICATION_CHANNEL_NAME = "channel_id_server_name";
+    public static final String NOTIFICATION_CHANNEL_DESC = "cast server";
+    public static final String NOTIFICATION_CHANNEL_ID = "channel_id_server";
+    public void createNotification() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            Intent notificationIntent = new Intent(this, ServerService.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            Notification.Builder notificationBuilder = (new Notification.Builder(this, NOTIFICATION_CHANNEL_ID))
+                    .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_stat_cast))
+                    .setSmallIcon(R.drawable.ic_stat_cast)
+                    .setContentTitle("Content Title")
+                    .setContentText("Content Text")
+                    .setTicker("ticker test").setContentIntent(pendingIntent);
+            Notification notification = notificationBuilder.build();
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, 3);
+            channel.setDescription(NOTIFICATION_CHANNEL_DESC);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.createNotificationChannel(channel);
+            this.startForeground(NOTIFICATION_ID, notification);
+        }
+    }
 
     private class ToastRunnable implements Runnable {
         String mText;
