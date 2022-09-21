@@ -2,7 +2,7 @@ package in.omerjerk.remotedroid.app;
 
 import android.os.*;
 import android.os.Process;
-import android.support.v4.view.InputDeviceCompat;
+import androidx.core.view.InputDeviceCompat;
 import android.util.Log;
 
 import com.koushikdutta.async.callback.CompletedCallback;
