@@ -35,6 +35,7 @@
         </activity>
         <service
             android:name="in.omerjerk.remotedroid.app.ServerService"
+            android:foregroundServiceType="mediaProjection"
             android:exported="true"
             android:label="@string/title_activity_server" >
         </service>
