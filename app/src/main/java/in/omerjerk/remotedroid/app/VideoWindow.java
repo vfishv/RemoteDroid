@@ -61,7 +61,7 @@ public class VideoWindow extends LinearLayout implements SurfaceHolder.Callback{
     public void inflateSurfaceView() {
         surfaceView = (SurfaceView) findViewById(R.id.demo_surface_view);
         surfaceView.getHolder().addCallback(this);
-        encBuffer = new CircularEncoderBuffer((int)(1024 * 1024 * 0.5), 30, 7);
+        encBuffer = new CircularEncoderBuffer(ServerService.BIT_RATE, ServerService.FPS, 7);
     }
 
     @Override
