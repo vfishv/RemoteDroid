@@ -184,27 +184,21 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids){
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainActivity.this,
-                                            "Installing", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean(KEY_SYSTEM_PRIVILEGE_PREF, true);
-                            editor.commit();
-                            Shell.SU.run(String.format(INSTALL_SCRIPT,
-                                    new String[] {
-                                            MainActivity.this.getPackageCodePath(),
-                                            MainActivity.this.getPackageName()
-                                    }));
-                            return null;
-                        }
-                    }.execute();
+                    new Thread(() -> {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this,"Installing", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean(KEY_SYSTEM_PRIVILEGE_PREF, true);
+                        editor.commit();
+                        String command = String.format(INSTALL_SCRIPT,
+                                getPackageCodePath(),
+                                getPackageName());
+                        Shell.SU.run(command);
+                    }).start();
                 }
             })
             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -10,8 +10,11 @@ import java.nio.ByteBuffer;
  */
 public class CodecUtils {
 
-    public static final int WIDTH = 1080 / 4;
-    public static final int HEIGHT = 1920 / 4;
+    public static final int WIDTH = 1080 / 2;
+    public static final int HEIGHT = 1920 / 2;
+
+    public static final int BIT_RATE = 3 * 1024 * 1024;
+    public static final int FPS = 24;
 
     public static final int TIMEOUT_USEC = 10000;
 
@@ -26,8 +29,8 @@ public class CodecUtils {
                 continue;
             }
             String[] types = codecInfo.getSupportedTypes();
-            for (int j = 0; j < types.length; j++) {
-                if (types[j].equalsIgnoreCase(mimeType)) {
+            for (String type : types) {
+                if (type.equalsIgnoreCase(mimeType)) {
                     return codecInfo;
                 }
             }

@@ -56,8 +56,6 @@ public class ServerService extends Service {
     private MediaCodec encoder = null;
 
     private static final String TAG = "omerjerk";
-    public static final int BIT_RATE = 1024 * 1024;
-    public static final int FPS = 24;
 
     static MediaProjection mMediaProjection;
     //private MediaProjectionManager mMediaProjectionManager;
@@ -258,8 +256,8 @@ public class ServerService extends Service {
     private Surface createDisplaySurface() throws IOException {
         MediaFormat mMediaFormat = MediaFormat.createVideoFormat(CodecUtils.MIME_TYPE,
                 CodecUtils.WIDTH, CodecUtils.HEIGHT);
-        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
-        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, FPS);
+        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, CodecUtils.BIT_RATE);
+        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, CodecUtils.FPS);
         mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         Log.i(TAG, "Starting encoder");
@@ -371,7 +369,7 @@ public class ServerService extends Service {
 
                     try {
                         encoder.releaseOutputBuffer(encoderStatus, false);
-                    } catch (IllegalStateException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
