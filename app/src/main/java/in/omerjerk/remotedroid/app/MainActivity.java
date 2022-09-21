@@ -20,6 +20,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import eu.chainfire.libsuperuser.Shell;
 import in.umairkhan.remotedroid.R;
 
@@ -33,8 +37,7 @@ public class MainActivity extends Activity {
 
     public static final boolean DEBUG = false;
 
-    static MediaProjection mMediaProjection;
-    private MediaProjectionManager mMediaProjectionManager;
+    static MediaProjectionManager mMediaProjectionManager;
 
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private Intent mResultData;
@@ -110,15 +113,17 @@ public class MainActivity extends Activity {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_MEDIA_PROJECTION) {
             if (resultCode != Activity.RESULT_OK) {
                 Toast.makeText(this, "User cancelled the access", Toast.LENGTH_SHORT).show();
                 return;
             }
-            mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
             Intent startServerIntent = new Intent(MainActivity.this, ServerService.class);
             startServerIntent.setAction("START");
-            startService(startServerIntent);
+            startServerIntent.putExtra("data", data);
+            startServerIntent.putExtra("resultCode", resultCode);
+            ActivityCompat.startForegroundService(this, startServerIntent);
         }
     }
 
