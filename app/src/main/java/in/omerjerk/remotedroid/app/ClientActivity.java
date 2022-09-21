@@ -1,7 +1,6 @@
 package in.omerjerk.remotedroid.app;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.Point;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
@@ -14,6 +13,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.grafika.CircularEncoderBuffer;
 import com.koushikdutta.async.ByteBufferList;
@@ -34,7 +35,7 @@ import java.util.TimerTask;
 import in.umairkhan.remotedroid.R;
 
 @SuppressLint("NewApi")
-public class ClientActivity extends Activity implements SurfaceHolder.Callback, View.OnTouchListener{
+public class ClientActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnTouchListener{
 
     private static final String TAG = "omerjerk";
 

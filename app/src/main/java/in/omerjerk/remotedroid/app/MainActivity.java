@@ -20,11 +20,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import eu.chainfire.libsuperuser.Shell;
 import in.umairkhan.remotedroid.R;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     SharedPreferences prefs;
     boolean hasSystemPrivileges = false;
