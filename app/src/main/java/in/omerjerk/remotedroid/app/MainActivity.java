@@ -197,11 +197,10 @@ public class MainActivity extends Activity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean(KEY_SYSTEM_PRIVILEGE_PREF, true);
                             editor.commit();
-                            Shell.SU.run(String.format(INSTALL_SCRIPT,
-                                    new String[] {
-                                            MainActivity.this.getPackageCodePath(),
-                                            MainActivity.this.getPackageName()
-                                    }));
+                            String command = String.format(INSTALL_SCRIPT,
+                                    getPackageCodePath(),
+                                    getPackageName());
+                            Shell.SU.run(command);
                             return null;
                         }
                     }.execute();
