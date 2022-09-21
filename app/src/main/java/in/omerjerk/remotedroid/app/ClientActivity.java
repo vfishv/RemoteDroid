@@ -44,7 +44,7 @@ public class ClientActivity extends Activity implements SurfaceHolder.Callback, 
     boolean decoderConfigured = false;
     MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
 
-    CircularEncoderBuffer encBuffer = new CircularEncoderBuffer(ServerService.BIT_RATE, ServerService.FPS, 7);
+    CircularEncoderBuffer encBuffer = new CircularEncoderBuffer(CodecUtils.BIT_RATE, CodecUtils.FPS, 7);
 
     private WebSocket webSocket;
     private WebSocket touchSocket;

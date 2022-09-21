@@ -10,8 +10,11 @@ import java.nio.ByteBuffer;
  */
 public class CodecUtils {
 
-    public static final int WIDTH = 1080 / 4;
-    public static final int HEIGHT = 1920 / 4;
+    public static final int WIDTH = 1080 / 2;
+    public static final int HEIGHT = 1920 / 2;
+
+    public static final int BIT_RATE = 6 * 1024 * 1024;
+    public static final int FPS = 24;
 
     public static final int TIMEOUT_USEC = 10000;
 
