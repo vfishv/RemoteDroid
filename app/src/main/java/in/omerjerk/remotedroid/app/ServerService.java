@@ -17,6 +17,8 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -29,6 +31,9 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
@@ -51,6 +56,9 @@ public class ServerService extends Service {
     private MediaCodec encoder = null;
 
     private static final String TAG = "omerjerk";
+
+    static MediaProjection mMediaProjection;
+    //private MediaProjectionManager mMediaProjectionManager;
 
     private int serverPort;
     private float bitrateRatio;
@@ -76,29 +84,33 @@ public class ServerService extends Service {
     public void onCreate() {
         super.onCreate();
         createNotification();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        }
+
     }
 
-    public static final int NOTIFICATION_ID = 123567;
-    public static final String NOTIFICATION_CHANNEL_NAME = "channel_id_server_name";
-    public static final String NOTIFICATION_CHANNEL_DESC = "cast server";
-    public static final String NOTIFICATION_CHANNEL_ID = "channel_id_server";
+    public static final int NOTIFICATION_ID = 6000;
     public void createNotification() {
+        Intent notificationIntent = new Intent(this, ServerService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Intent notificationIntent = new Intent(this, ServerService.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-            Notification.Builder notificationBuilder = (new Notification.Builder(this, NOTIFICATION_CHANNEL_ID))
+            App.getInstance().createNotificationChannel();
+
+            NotificationCompat.Builder notificationBuilder = (new NotificationCompat.Builder(this, App.NOTIFICATION_CHANNEL_ID))
                     .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_stat_cast))
                     .setSmallIcon(R.drawable.ic_stat_cast)
                     .setContentTitle("Content Title")
                     .setContentText("Content Text")
-                    .setTicker("ticker test").setContentIntent(pendingIntent);
+                    .setTicker("ticker test")
+                    .setContentIntent(pendingIntent);
             Notification notification = notificationBuilder.build();
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, 3);
-            channel.setDescription(NOTIFICATION_CHANNEL_DESC);
+            NotificationChannel channel = new NotificationChannel(App.NOTIFICATION_CHANNEL_ID, App.NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(App.NOTIFICATION_CHANNEL_DESC);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             notificationManager.createNotificationChannel(channel);
-            this.startForeground(NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_ID, notification);
         }
     }
 
@@ -121,6 +133,14 @@ public class ServerService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            Intent data = intent.getParcelableExtra("data");
+            int resultCode = intent.getIntExtra("resultCode", -1);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && data != null) {
+                ServerService.mMediaProjection = MainActivity.mMediaProjectionManager.getMediaProjection(resultCode, data);
+            }
+        }
+
         if (intent != null && intent.getAction() == "STOP") {
             dispose();
             return START_NOT_STICKY;
@@ -262,8 +282,8 @@ public class ServerService extends Service {
                     encoderInputSurface,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC | DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE);
         } else {
-            if (MainActivity.mMediaProjection != null) {
-                virtualDisplay = MainActivity.mMediaProjection.createVirtualDisplay("Remote Droid",
+            if (mMediaProjection != null) {
+                virtualDisplay = mMediaProjection.createVirtualDisplay("Remote Droid",
                         CodecUtils.WIDTH, CodecUtils.HEIGHT, 50,
                         DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                         encoderInputSurface, null, null);
@@ -380,14 +400,14 @@ public class ServerService extends Service {
         Intent intent = new Intent(this, ServerService.class);
         intent.setAction("STOP");
         PendingIntent stopServiceIntent = PendingIntent.getService(this, 0, intent, 0);
-        Notification.Builder mBuilder =
-                new Notification.Builder(this)
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this, App.NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setOngoing(true)
                         .addAction(R.drawable.ic_media_stop, "Stop", stopServiceIntent)
                         .setContentTitle(message)
                         .setContentText(Utils.getIPAddress(true) + ":" + serverPort);
-        startForeground(6000, mBuilder.build());
+        startForeground(NOTIFICATION_ID, mBuilder.build());
     }
 
     private void dispose() {
