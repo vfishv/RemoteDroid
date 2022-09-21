@@ -1,11 +1,12 @@
 package in.omerjerk.remotedroid.app;
 
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
-public class App extends Application {
+import androidx.multidex.MultiDexApplication;
+
+public class App extends MultiDexApplication {
 
     public static final String NOTIFICATION_CHANNEL_NAME = "channel_id_server_name";
     public static final String NOTIFICATION_CHANNEL_DESC = "cast server";
